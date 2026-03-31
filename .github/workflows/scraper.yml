@@ -13,6 +13,10 @@ jobs:
   run-scraper:
     runs-on: ubuntu-latest
     
+    # Soluciona la advertencia de Node.js 20 forzando la versión 24
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+    
     # IMPORTANTE: Permiso necesario para que el bot pueda guardar los cambios en products.json
     permissions:
       contents: write
@@ -41,5 +45,9 @@ jobs:
           git config --global user.name "GitHub Actions Bot"
           git config --global user.email "actions@github.com"
           git add products.json
-          git diff --quiet && git diff --staged --quiet || git commit -m "Actualización automática del catálogo"
-          git push
+          if ! git diff --staged --quiet; then
+            git commit -m "Actualización automática del catálogo"
+            git push
+          else
+            echo "No hubo cambios en el catálogo hoy."
+          fi
