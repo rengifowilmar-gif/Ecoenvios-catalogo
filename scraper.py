@@ -20,7 +20,7 @@ CATEGORIAS_D1 = {
     #"Mascotas": "https://domicilios.tiendasd1.com/ca/mascotas/MASCOTAS",
     #"Bebidas": "https://domicilios.tiendasd1.com/ca/bebidas/BEBIDAS",
     #"Otros": "https://domicilios.tiendasd1.com/ca/otros/OTROS",
-    #"Lo nuevo": "https://domicilios.tiendasd1.com/ca/lo%20nuevo/LO%20NUEVO"
+    "Lo nuevo": "https://domicilios.tiendasd1.com/ca/lo%20nuevo/LO%20NUEVO"
     # Añade más categorías según necesites...
 }
 
