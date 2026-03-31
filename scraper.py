@@ -34,7 +34,7 @@ def cargar_catalogo_existente(filepath):
                 datos = json.load(f)
                 print(f"[*] Catálogo histórico cargado: {len(datos)} artículos existentes.")
                 # Convertimos la lista en un diccionario {id_producto: {datos_del_producto}}
-                return {item["id_producto"]: item for item in datos}
+                return {item["id"]: item for item in datos}
         except json.JSONDecodeError:
             print("[!] El archivo JSON actual está corrupto o vacío. Se creará uno nuevo.")
             return {}
