@@ -10,7 +10,7 @@ from playwright.async_api import async_playwright, TimeoutError as PlaywrightTim
 # Agrega aquí todas las URLs de las categorías que deseas raspar.
 # La clave (ej. "Aseo Hogar") será la que use tu frontend de Netlify para los filtros.
 CATEGORIAS_D1 = {
-    "Aseo Hogar": "https://domicilios.tiendasd1.com/ca/aseo%20hogar/ASEO%20HOGAR",
+    "Aseo hogar": "https://domicilios.tiendasd1.com/ca/aseo%20hogar/ASEO%20HOGAR",
     "Aseo y cuidado personal": "https://domicilios.tiendasd1.com/ca/aseo%20y%20cuidado%20personal/ASEO%20Y%20CUIDADO%20PERSONAL",
     "Bebé": "https://domicilios.tiendasd1.com/ca/bebe/BEB%C3%89",
     #"Alimentos y Despensa": "https://domicilios.tiendasd1.com/ca/alimentos%20y%20despensa/ALIMENTOS%20Y%20DESPENSA",
