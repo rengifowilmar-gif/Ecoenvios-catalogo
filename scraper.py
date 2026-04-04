@@ -158,12 +158,12 @@ async def ejecutar_scraper():
                                 # 3. LÓGICA DE UPSERT (Proteger 'unidadesPorCaja')
                                 if id_producto in catalogo_actual:
                                     # El producto ya existe: Actualizamos datos volátiles, conservamos el resto
-                                    catalogo_actual[id_producto]["precio_actual"] = precio_actual
+                                    catalogo_actual[id_producto]["price"] = precio_actual
                                     catalogo_actual[id_producto]["disponible"] = estado_disponible
                                     catalogo_actual[id_producto]["imageUrl"] = imagen_url
                                     catalogo_actual[id_producto]["fecha_extraccion"] = datetime.now().isoformat()
                                     # Aseguramos que tenga la categoría correcta para los filtros
-                                    catalogo_actual[id_producto]["categoria"] = nombre_categoria
+                                    catalogo_actual[id_producto]["category"] = nombre_categoria
                                 else:
                                     # El producto es NUEVO: Lo insertamos con valor 1 por defecto en cajas
                                     catalogo_actual[id_producto] = {
