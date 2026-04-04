@@ -1,0 +1,451 @@
+/* frontend/css/components.css */
+#sticky-header-container {
+    --tab-padding-y: 12px;
+    --tab-padding-x: 18px;
+    --tab-font-size: 1.05em;
+    --tab-gap: 8px;
+}
+
+/* --- PESTAÑAS DE CATEGORÍAS (estilo chip/badge) --- */
+.tab-button {
+    /* Dimensiones dinámicas según scroll-progress */
+    padding: calc((var(--tab-padding-y) - (4px * var(--scroll-progress)))) 
+             calc((var(--tab-padding-x) - (8px * var(--scroll-progress))));
+    font-size: calc(var(--tab-font-size) - (0.15em * var(--scroll-progress)));
+    gap: calc(var(--tab-gap) - (3px * var(--scroll-progress)));
+    
+    cursor: pointer;
+    border: none;
+    background-color: var(--white);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+    font-weight: 700;
+    color: var(--medium-gray);
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50px; /* Píldora completamente redondeada */
+    opacity: 1;
+    overflow: hidden;
+    white-space: nowrap;
+    min-width: 0;
+    flex-shrink: 0;
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+.tab-button:hover {
+    background-color: var(--white);
+    box-shadow: 0 5px 15px rgba(106, 27, 154, 0.15);
+}
+
+/* --- Categoría ACTIVA (resaltada con color púrpura sólido) --- */
+.tab-button.active {
+    background-color: var(--purple);
+    color: var(--white);
+    box-shadow: 0 4px 12px rgba(106, 27, 154, 0.3);
+}
+.tab-button.active .count {
+    background-color: rgba(255, 255, 255, 0.25);
+    color: var(--white);
+}
+
+/* --- Badge contador en las pestañas --- */
+.tab-button .count {
+    background-color: #d0d0d0;
+    color: var(--dark-gray);
+    padding: 2px 7px;
+    border-radius: 50px;
+    font-size: 0.8em;
+    font-weight: 700;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Reducir y desvanecer pestañas inactivas progresivamente con el scroll */
+.tab-button:not(.active) {
+    opacity: calc(1 - var(--scroll-progress));
+    font-size: calc((var(--tab-font-size) - (0.15em * var(--scroll-progress))) * (1 - var(--scroll-progress)));
+    padding: calc((var(--tab-padding-y) - (4px * var(--scroll-progress))) * (1 - var(--scroll-progress))) 
+             calc((var(--tab-padding-x) - (8px * var(--scroll-progress))) * (1 - var(--scroll-progress)));
+    gap: calc((var(--tab-gap) - (3px * var(--scroll-progress))) * (1 - var(--scroll-progress)));
+    margin: 0;
+}
+.tab-button:not(.active) .count {
+    font-size: calc(0.8em * (1 - var(--scroll-progress)));
+    padding: calc(2px * (1 - var(--scroll-progress))) calc(6px * (1 - var(--scroll-progress)));
+}
+#sticky-header-container.scrolled .tab-button:not(.active) {
+    pointer-events: none;
+}
+
+/* --- CONTENIDO DE LAS PESTAÑAS (PRODUCTOS) --- */
+.tab-content {
+    display: none;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 15px;
+}
+.tab-content.active {
+    display: grid;
+}
+
+.product-card {
+    background-color: #f8f9fa; /* Fondo gris claro humo */
+    border: none;
+    border-radius: 20px;
+    padding: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Mantiene el botón siempre abajo */
+    height: 100%; /* Ocupar todo el espacio de la cuadrícula por igual */
+    box-sizing: border-box;
+    transition: all 0.3s ease; 
+}
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+.product-card.hidden {
+    opacity: 0;
+    transform: scale(0.9);
+    display: none; 
+}
+.product-card img {
+    width: 100%;
+    max-width: 100%;
+    height: 120px;
+    object-fit: contain;
+    margin-bottom: 15px; /* Más espacio */
+    align-self: center;
+    border-radius: 12px;
+    mix-blend-mode: multiply; /* Fusiona imágenes con fondo blanco al gris claro */
+}
+.product-card .name {
+    font-weight: 600;
+    margin-bottom: 5px;
+    flex-grow: 1;
+    text-align: center;
+    font-size: 0.9em; 
+}
+.product-card .price {
+    color: var(--medium-gray);
+    font-size: 1.1em;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: center;
+}
+.add-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.form-row {
+    display: flex;
+    gap: 5px;
+}
+.form-row input, .form-row select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.9em; 
+}
+.add-to-cart-btn {
+    background-color: var(--purple);
+    color: var(--white);
+    border: none;
+    padding: 12px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s, transform 0.2s;
+    width: 100%;
+}
+.add-to-cart-btn:hover {
+    background-color: #4A148C;
+    transform: scale(1.02);
+}
+.add-to-cart-btn.in-cart {
+    background-color: var(--medium-gray); 
+    cursor: default; 
+    pointer-events: none; 
+}
+.add-to-cart-btn.added {
+    background-color: var(--green);
+    cursor: not-allowed;
+}
+
+/* --- SECCIÓN DEL CARRITO LADO DERECHO (DRAWER) --- */
+.cart-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    transform: translateX(100%); /* Oculto completamente fuera de la pantalla */
+    width: 100%;
+    max-width: 400px;
+    height: 100vh;
+    background-color: var(--white);
+    padding: 20px;
+    box-shadow: -5px 0 20px rgba(0,0,0,0.1);
+    z-index: 2000;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+.cart-drawer.active {
+    transform: translateX(0); /* Desliza hacia adentro */
+}
+#cart-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0,0,0,0.5);
+    backdrop-filter: blur(3px);
+    z-index: 1999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+#cart-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+#cart-section h2 {
+    text-align: left;
+    color: var(--purple);
+    margin: 0; 
+}
+.cart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--light-gray);
+    padding-bottom: 15px;
+}
+.cart-header-actions {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+#close-cart-btn {
+    background: var(--light-gray);
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#clear-cart-btn {
+    background: none;
+    border: none;
+    color: var(--medium-gray);
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: 600;
+    padding: 5px;
+}
+#clear-cart-btn:hover {
+    color: #d32f2f; 
+    text-decoration: underline;
+}
+
+#cart-items {
+    list-style-type: none;
+    padding: 0;
+    max-height: 300px;
+    overflow-y: auto;
+    -webkit-user-select: none; 
+    -moz-user-select: none;    
+    -ms-user-select: none;     
+    user-select: none;         
+}
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--light-gray);
+    font-size: 0.9em;
+}
+.cart-item-info {
+    flex-grow: 1;
+}
+.cart-item-info .item-type {
+    font-size: 0.8em;
+    color: var(--medium-gray);
+    display: block;
+}
+.cart-item-controls {
+    display: flex;
+    align-items: center;
+}
+.cart-item-controls button {
+    background: none;
+    border: 1px solid var(--medium-gray);
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+    margin: 0 5px;
+    font-weight: bold;
+}
+#cart-total {
+    text-align: right;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+/* --- FORMULARIO Y BOTÓN DE WHATSAPP --- */
+#customer-form {
+    margin-top: 20px;
+}
+#customer-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+#customer-form input, #customer-form textarea { 
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color: #fff; 
+}
+#send-whatsapp-btn {
+    background-color: var(--yellow);
+    color: var(--dark-gray);
+    border: none;
+    width: 100%;
+    padding: 15px;
+    font-size: 1.1em;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+#send-whatsapp-btn:hover {
+    transform: scale(1.02);
+}
+#send-whatsapp-btn svg {
+    width: 24px;
+    height: 24px;
+}
+
+#mobile-cart-fab {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: var(--purple);
+    color: var(--white);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    z-index: 1001;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    font-size: 0.7em;
+    font-weight: bold;
+    padding: 5px;
+    box-sizing: border-box;
+    text-align: center;
+}
+#mobile-cart-fab svg {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+}
+    #mobile-cart-fab .item-count {
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        background-color: var(--yellow);
+        color: var(--dark-gray);
+        border-radius: 50%;
+        width: 22px;
+        height: 22px;
+        font-size: 0.9em;
+        line-height: 22px;
+        text-align: center;
+        font-weight: bold;
+    }
+
+/* --- TOAST NOTIFICATIONS --- */
+#toast-container {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+}
+.toast {
+    background-color: #323232;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 0.95em;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+}
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* --- RESPONSIVO PARA COMPONENTES --- */
+@media (max-width: 767px) {
+    .tab-content {
+        /* Cuadrícula 2x3 en celulares (aprox 160px por item) */
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    .product-card {
+        padding: 10px;
+        border-radius: 10px;
+    }
+    .product-card img {
+        height: 100px;
+        margin-bottom: 8px;
+    }
+    .product-card .name {
+        font-size: 0.85em;
+        line-height: 1.3;
+    }
+    .product-card .price {
+        font-size: 0.95em;
+        margin-bottom: 8px;
+    }
+    .form-row input, .form-row select {
+        padding: 6px;
+        font-size: 0.85em;
+    }
+    .add-to-cart-btn {
+        padding: 8px;
+        font-size: 0.9em;
+    }
+}

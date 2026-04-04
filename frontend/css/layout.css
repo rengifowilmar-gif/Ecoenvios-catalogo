@@ -1,0 +1,177 @@
+/* frontend/css/layout.css */
+.container {
+    max-width: 1400px;
+    /* Ancho máximo para aprovechar pantallas grandes */
+    margin: 0 auto;
+    padding: 0 15px 20px 15px;
+}
+
+/* --- ENCABEZADO FIJO (position: fixed, fuera del flujo) --- */
+#sticky-header-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    /* Glassmorphism */
+    background: rgba(245, 245, 245, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    --scroll-progress: 0;
+    padding: calc(15px - (10px * var(--scroll-progress))) 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+header {
+    width: 100%;
+    text-align: center;
+    color: var(--purple);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.logo-placeholder {
+    font-weight: bold;
+    color: var(--purple);
+    line-height: 1;
+    font-size: calc(2.5em - (0.5em * var(--scroll-progress)));
+    transition: font-size 0.1s ease-out;
+}
+
+.header-text {
+    text-align: left;
+}
+
+header h1 {
+    margin: 0;
+    font-size: calc(2.2em - (0.7em * var(--scroll-progress)));
+    transition: font-size 0.1s ease-out;
+}
+
+header p {
+    transition: opacity 0.1s ease-out, max-height 0.1s ease-out, margin 0.1s ease-out;
+    opacity: calc(1 - var(--scroll-progress));
+    max-height: calc(30px * (1 - var(--scroll-progress)));
+    margin: calc(5px * (1 - var(--scroll-progress))) 0 calc(10px * (1 - var(--scroll-progress))) 0;
+    overflow: hidden;
+}
+
+#search-bar-container {
+    overflow: hidden;
+    transition: max-height 0.1s ease-out, opacity 0.1s ease-out, padding 0.1s ease-out;
+    padding: calc(10px * (1 - var(--scroll-progress))) 0;
+    max-height: calc(80px * (1 - var(--scroll-progress)));
+    opacity: calc(1 - var(--scroll-progress));
+}
+
+#search-bar {
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 1em;
+    border: none;
+    border-radius: 50px;
+    background-color: var(--white);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+    box-sizing: border-box;
+    transition: box-shadow 0.3s ease;
+}
+
+#search-bar:focus {
+    outline: none;
+    box-shadow: 0 6px 20px rgba(106, 27, 154, 0.15);
+}
+
+.tabs {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 0;
+    border-bottom: none;
+}
+
+.tabs::-webkit-scrollbar {
+    display: none;
+}
+
+/* --- CONTENIDO PRINCIPAL (PRODUCTOS Y CARRITO) --- */
+.content-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    /* margin-top se calcula dinámicamente via JS para compensar el header fijo */
+    margin-top: 20px;
+}
+
+#products-section {
+    width: 100%;
+}
+
+/* --- DISEÑO RESPONSIVO --- */
+@media (min-width: 768px) {
+    .container {
+        padding: 0 30px 30px 30px;
+    }
+
+    .content-wrapper {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    /* Quitar 2 columnas */
+    #products-section {
+        width: 100%;
+    }
+
+    /* El carrito ahora es un drawer global, por lo tanto no ocupa flex */
+    .tab-content {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    }
+}
+
+@media (max-width: 767px) {
+    header {
+        justify-content: center;
+    }
+
+    header h1 {
+        font-size: calc(1.5em - (0.3em * var(--scroll-progress)));
+    }
+
+    .logo-placeholder {
+        font-size: calc(2em - (0.4em * var(--scroll-progress)));
+    }
+
+    .header-text p {
+        font-size: 0.85em;
+        margin-bottom: 5px;
+    }
+
+    .container {
+        padding: 0 5px 15px 5px;
+        /* Aprovechar al máximo la pantalla */
+    }
+
+    #sticky-header-container {
+        --tab-padding-y: 8px;
+        --tab-padding-x: 14px;
+        /* Aumentado para dar más espacio horizontal y evitar apiñamiento */
+        --tab-font-size: 0.9em;
+        /* Aumentado ligeramente para mejor legibilidad */
+        --tab-gap: 8px;
+        /* Aumentado para separar los botones */
+    }
+
+    .tabs {
+        justify-content: flex-start;
+        /* Permite scroll natural desde la izquierda */
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+}

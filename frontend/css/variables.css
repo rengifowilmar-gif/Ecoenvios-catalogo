@@ -1,0 +1,25 @@
+/* frontend/css/variables.css */
+/* --- ESTILOS GENERALES Y PALETA DE COLORES --- */
+:root {
+    --purple: #6D3BA5;
+    /* Morado principal */
+    --yellow: #FBE94E;
+    /* Amarillo para botones importantes */
+    --light-gray: #F5F5F5;
+    /* Fondo de la página */
+    --white: #FFFFFF;
+    /* Fondo de las tarjetas y el carrito */
+    --dark-gray: #424242;
+    /* Texto principal */
+    --medium-gray: #757575;
+    /* Texto secundario */
+    --green: #4CAF50;
+    /* Verde éxito */
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--light-gray);
+    color: var(--dark-gray);
+    margin: 0;
+}
