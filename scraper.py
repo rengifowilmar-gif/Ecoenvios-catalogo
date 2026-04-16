@@ -14,11 +14,11 @@ CATEGORIAS_D1 = {
     "Aseo y cuidado personal": "https://domicilios.tiendasd1.com/ca/aseo%20y%20cuidado%20personal/ASEO%20Y%20CUIDADO%20PERSONAL",
     "Bebé": "https://domicilios.tiendasd1.com/ca/bebe/BEB%C3%89",
     "Alimentos y Despensa": "https://domicilios.tiendasd1.com/ca/alimentos%20y%20despensa/ALIMENTOS%20Y%20DESPENSA",
-    "Extraordinarios": "https://domicilios.tiendasd1.com/ca/extraordinarios/EXTRAORDINARIOS",
-    "Congelados": "https://domicilios.tiendasd1.com/ca/congelados/CONGELADOS",
-    "Lacteos": "https://domicilios.tiendasd1.com/ca/lacteos/L%C3%81CTEOS",
-    "Mascotas": "https://domicilios.tiendasd1.com/ca/mascotas/MASCOTAS",
-    "Bebidas": "https://domicilios.tiendasd1.com/ca/bebidas/BEBIDAS",
+    #"Extraordinarios": "https://domicilios.tiendasd1.com/ca/extraordinarios/EXTRAORDINARIOS",
+    #"Congelados": "https://domicilios.tiendasd1.com/ca/congelados/CONGELADOS",
+    #"Lacteos": "https://domicilios.tiendasd1.com/ca/lacteos/L%C3%81CTEOS",
+    #"Mascotas": "https://domicilios.tiendasd1.com/ca/mascotas/MASCOTAS",
+    #"Bebidas": "https://domicilios.tiendasd1.com/ca/bebidas/BEBIDAS",
     "Otros": "https://domicilios.tiendasd1.com/ca/otros/OTROS",
     "Lo nuevo": "https://domicilios.tiendasd1.com/ca/lo%20nuevo/LO%20NUEVO"
     # Añade más categorías según necesites...
