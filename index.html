@@ -525,7 +525,7 @@
             // --- CONSTANTES Y ELEMENTOS DEL DOM ---
             const WHATSAPP_NUMBER = '+573052494444';
             // NUEVO: Pega aquí la URL que te dio Google Apps Script
-            const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbymr9BZsdgla3xmSKj7VlixihWXm4lqGlJ0AvmTm5M1ZFEjE6ZpPxOn5dKiFITjEvrflQ/exec';
+            const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwmf4kk65LmUAt5Ff4Aeek_ThZXnGecYVHfFUztZGgdkn1jdH30ySmyx8eEQqQTg9MUmg/exec';
             const stickyHeader = document.getElementById('sticky-header-container');
             const tabsContainer = document.getElementById('tabs-container');
             const productsContainer = document.getElementById('products-container');
@@ -603,9 +603,10 @@
 
             // --- FUNCIÓN PARA EL ENCABEZADO FIJO ---
             function handleScroll() {
-                if (window.scrollY > 30) {
+                // Se implementa 'histéresis' (márgenes distintos) para evitar el parpadeo infinito
+                if (window.scrollY > 100) {
                     stickyHeader.classList.add('scrolled');
-                } else {
+                } else if (window.scrollY < 20) {
                     stickyHeader.classList.remove('scrolled');
                 }
             }
@@ -613,7 +614,7 @@
 
             // --- FUNCIÓN PARA MOSTRAR LOS PRODUCTOS EN PESTAÑAS ---
             function renderProducts() {
-                const categories = ["Aseo hogar", "Aseo y cuidado personal", "Bebé", "Lo nuevo", "Alimentos y despensa", "Aseo hogar Ara", "Cuidado Personal Ara"];
+                const categories = ["Aseo hogar", "Aseo y cuidado personal", "Bebé", "Lo nuevo", "Extraordinarios", "Aseo hogar Ara", "Cuidado Personal Ara"];
                 tabsContainer.innerHTML = '';
                 productsContainer.innerHTML = '';
 
@@ -690,6 +691,8 @@
                     cartItemsEl.innerHTML = '<p>Tu carrito está vacío.</p>';
                     cartTotalEl.textContent = 'Total: $0';
                     mobileCartCount.textContent = '0'; // NUEVO
+                    updateButtonStates(); // <-- Añadido para arreglar los botones al vaciar el carrito
+                    localStorage.setItem('cart', JSON.stringify(cart));
                     return;
                 }
                 cartItemsEl.innerHTML = '';
@@ -803,6 +806,7 @@
 
             // --- MANEJO DEL ENVÍO DEL FORMULARIO A WHATSAPP Y GOOGLE ---
             // Usamos 'async' para poder usar 'await' y manejar el envío
+            // --- MANEJO DEL ENVÍO DEL FORMULARIO A WHATSAPP Y GOOGLE ---
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
 
@@ -820,95 +824,87 @@
 
                 // Deshabilitar el botón para evitar envíos duplicados
                 sendButton.disabled = true;
-                sendButton.innerHTML = 'Enviando... ⏳';
-
-                // 1. Preparar los datos
-                let total = 0;
-                let fullOrderListString = ''; // Pedido completo para Google Sheets
-
-                for (const key in cart) {
-                    const item = cart[key];
-                    const itemTotal = item.price * item.quantity;
-                    total += itemTotal;
-                    // Construye la lista detallada para Google
-                    fullOrderListString += `• (${item.quantity}x) ${item.name} (${item.displayType}) - $${itemTotal.toLocaleString('es-CO')}\n`;
-                }
-
-                // 2. Crear el "payload" (datos) para Google Sheets
-                const payload = {
-                    name: customerName,
-                    address: customerAddress,
-                    notes: customerNotes,
-                    total: `$${total}`, // <-- NUEVA LÍNEA (sin toLocaleString)
-                    orderList: fullOrderListString
-                };
-
-                // 3. Crear el mensaje RESUMEN para WhatsApp (actualizado)
-                let whatsappSummary = `¡Hola! 👋 Acabo de enviar un pedido desde *Catalogo Casero*.\n\n`;
-                whatsappSummary += `*Cliente:* ${customerName}\n`;
-                // NUEVO: Añadir dirección
-                whatsappSummary += `*Dirección:* ${customerAddress}\n`; 
-                // NUEVO: Cambiar etiqueta a "Total Estimado"
-                whatsappSummary += `*Total Estimado:* $${total.toLocaleString('es-CO')}\n`; 
-                
-                // NUEVO: Añadir notas si existen
-                if (customerNotes) {
-                    whatsappSummary += `\n*Notas Adicionales:*\n${customerNotes}\n`;
-                }
-        
-        whatsappSummary += `\nPor favor, confírmame cuando lo veas en tu sistema. ¡Gracias! 🙏`;
+                sendButton.innerHTML = 'Enviando Pedido... ⏳';
 
                 try {
-                    // 4. Enviar el pedido COMPLETO a Google Sheets
-                    // Usamos 'fetch' para enviar los datos a tu script de Google
-                    const response = await fetch(GOOGLE_SCRIPT_URL, {
-                        method: 'POST',
-                        redirect: 'follow',
-                        headers: {
-                            'Content-Type': 'text/plain;charset=utf-8', // Usar text/plain evita problemas de CORS
-                        },
-                        body: JSON.stringify(payload) // Convierte el objeto a un string JSON
-                    });
+                    // 1. Preparar los datos
+                    let total = 0;
+                    let fullOrderListString = ''; // Resumen de texto para WhatsApp
+                    const articulosParaGoogle = []; // ¡NUEVO! Array estructurado para el Backend
 
-                    // (Opcional) Podrías verificar si la respuesta de Google fue "success"
-                    // const result = await response.json(); 
-                    // if (result.result !== 'success') {
-                    //    throw new Error(result.message);
-                    // }
+                    for (const key in cart) {
+                        const item = cart[key];
+                        const itemTotal = item.price * item.quantity;
+                        total += itemTotal;
+                        
+                        // Texto para WhatsApp
+                        fullOrderListString += `• (${item.quantity}x) ${item.name} (${item.displayType}) - $${itemTotal.toLocaleString('es-CO')}\n`;
 
-                    // 5. Si el envío a Google fue exitoso (o al menos se completó), abrir WhatsApp
+                        // --- LÓGICA PARA EL BACKEND (Google Sheets) ---
+                        // Recuperamos la info original del producto
+                        const productId = key.split('-')[0];
+                        const productInfo = allProducts.find(p => p.id == productId);
+                        const unidadesCaja = productInfo ? (productInfo.unidadesPorCaja || 1) : 1;
+                        const precioUnitario = productInfo ? productInfo.price : item.price;
+                        
+                        // El backend calcula las cajas. Si el cliente agregó "Cajas" al carrito, 
+                        // debemos multiplicarlo aquí para enviar las unidades totales crudas.
+                        let cantidadTotalUnidades = item.type === 'caja' ? (item.quantity * unidadesCaja) : item.quantity;
+
+                        articulosParaGoogle.push({
+                            id: productId,
+                            name: item.name,
+                            cantidad: cantidadTotalUnidades,
+                            unidadesPorCaja: unidadesCaja,
+                            price: precioUnitario
+                        });
+                    }
+
+                    // 2. Crear el "payload" EXACTO que espera Google Sheets
+                    const payload = {
+                        cliente: customerName,
+                        direccion: customerAddress,
+                        notas: customerNotes,
+                        articulos: articulosParaGoogle
+                    };
+                    
+                    // 3. Crear el mensaje resumen para WhatsApp
+                    let whatsappSummary = `¡Hola! 👋 Acabo de enviar un pedido desde el catálogo.\n\n`;
+                    whatsappSummary += `*👤 Cliente:* ${customerName}\n`;
+                    whatsappSummary += `*📍 Dirección:* ${customerAddress}\n`; 
+                    whatsappSummary += `*💰 Total Estimado:* $${total.toLocaleString('es-CO')}\n`; 
+                    
+                    if (customerNotes) {
+                        whatsappSummary += `\n*📝 Notas Adicionales:*\n${customerNotes}\n`;
+                    }
+                    whatsappSummary += `\nYa está registrado en tu sistema. Por favor, confírmame el envío. ¡Gracias! 🙏`;
+
+                    // 4. Abrir WhatsApp INMEDIATAMENTE para evitar el bloqueo de ventanas emergentes
                     const whatsappUrl = `https://api.whatsapp.com/send/?phone=${WHATSAPP_NUMBER}&text=${encodeURIComponent(whatsappSummary)}`;
                     window.open(whatsappUrl, '_blank');
 
-                    // (Opcional) Limpiar el carrito después de un envío exitoso
+                    // 5. Enviar al Backend (Google Sheets) después de abrir WhatsApp
+                    await fetch(GOOGLE_SCRIPT_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    // 6. Limpiar carrito local y recargar la página para un reseteo absoluto
                     cart = {};
                     localStorage.removeItem('cart');
-                    renderCart();
-                    form.reset(); // Limpia los campos del formulario
+                    window.location.reload();
 
                 } catch (error) {
-                    // Si falla el envío a Google, se lo notificamos al usuario
-                    console.error('Error al enviar a Google Sheets:', error);
-                    alert('¡Error! No se pudo registrar el pedido en el sistema. Se abrirá WhatsApp con el pedido completo para enviarlo manualmente.');
-
-                    // Plan B: Si Google falla, envía el pedido completo a WhatsApp como antes
-                    const fallbackMessage = `¡Hola! 👋 Hubo un error con el sistema, te envío mi pedido manualmente:\n\n` +
-                                        `*Cliente:* ${customerName}\n` +
-                                        `*Dirección:* ${customerAddress}\n\n` +
-                                        `*MI PEDIDO:*\n${fullOrderListString}\n` +
-                                        `*TOTAL:* $${total.toLocaleString('es-CO')}\n` +
-                                        (customerNotes ? `*Notas:* ${customerNotes}` : '');
-
-                    const whatsappFallbackUrl = `https://api.whatsapp.com/send/?phone=${WHATSAPP_NUMBER}&text=${encodeURIComponent(fallbackMessage)}`;
-                    window.open(whatsappFallbackUrl, '_blank');
-
+                    console.error('Error Crítico:', error);
+                    alert('No se pudo registrar el pedido automáticamente en el sistema de Ecoenvíos. Por favor contacta al administrador.');
                 } finally {
-                    // 6. Volver a habilitar el botón
+                    // Restaurar el botón
                     sendButton.disabled = false;
-                    sendButton.innerHTML = `
-                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="..."></path></svg>
-                        Enviar Pedido por WhatsApp
-                    `; // (Restaurar el contenido original del botón)
+                    sendButton.innerHTML = `Enviar Pedido por WhatsApp`; 
                 }
             });
 
